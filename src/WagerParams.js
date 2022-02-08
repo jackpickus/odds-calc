@@ -74,7 +74,7 @@ const WagerParams = () => {
       <br />
       <form>
         <label htmlFor="wager">
-          Wager:
+          {choice == "Desired winnings" ? <span>Desired Winnings:</span> : <span>Wager:</span>}
           <input
             id="wager"
             value={wager}
