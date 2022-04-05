@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Action from "./Action";
 
 const CHOICES = ["Wager", "Desired winnings"];
 
@@ -7,8 +8,9 @@ const WagerParams = () => {
   const [odds, updateOdds] = useState("-110");
   const [choice, updateChoices] = useState("");
   const [message, updateMessage] = useState("");
-  const [cash, updateCash] = useState(0);
+  const [potentialWinnings, updatePotentialWinnings] = useState(0);
   const [totalPayout, updateTotalPayout] = useState(0);
+  const [bet, updateBet] = useState("");
 
   function calculateOdds(wager, odds, choice, e) {
     e.preventDefault();
@@ -43,7 +45,7 @@ const WagerParams = () => {
     }
 
     let roundedAmount = Math.round(amount * 100) / 100;
-    updateCash(roundedAmount);
+    updatePotentialWinnings(roundedAmount);
 
     let wagerToFloat = parseFloat(wager);
     let total = roundedAmount + wagerToFloat;
@@ -55,49 +57,87 @@ const WagerParams = () => {
 
   return (
     <div className="wager-params">
-      <label htmlFor="choices">
-        Choose either wager or desired winnings
-        <select
-          id="choices"
-          value={choice}
-          onChange={(e) => updateChoices(e.target.value)}
-          onBlur={(e) => updateChoices(e.target.value)}
-        >
-          <option />
-          {CHOICES.map((choice) => (
-            <option key={choice} value={choice}>
-              {choice}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="p-1 m-1">
+        <label htmlFor="choices">
+          Choose either wager or desired winnings
+          <select
+            id="choices"
+            value={choice}
+            onChange={(e) => updateChoices(e.target.value)}
+            onBlur={(e) => updateChoices(e.target.value)}
+          >
+            <option />
+            {CHOICES.map((choice) => (
+              <option key={choice} value={choice}>
+                {choice}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <br />
-      <form>
-        <label htmlFor="wager">
-          {choice == "Desired winnings" ? <span>Desired Winnings:</span> : <span>Wager:</span>}
-          <input
-            id="wager"
-            value={wager}
-            placeholder="Wager"
-            onChange={(e) => updateWager(e.target.value)}
-          />
-        </label>
-        <label htmlFor="odds">
-          Odds:
-          <input
-            id="odds"
-            value={odds}
-            placeholder="Odds"
-            onChange={(e) => updateOdds(e.target.value)}
-          />
-        </label>
-        <button onClick={(e) => calculateOdds(wager, odds, choice, e)}>
-          Submit
-        </button>
-      </form>
-      <div>{message != "" ? <p>{message}</p> : <p>Lets make some money!</p>}</div>
-      <p>Cash: {cash}</p>
+      <div className="my-0 mx-auto w-11/12">
+        <form>
+          <label htmlFor="wager" className="mx-3 text-purple-600">
+            {choice == "Desired winnings" ? (
+              <span>Desired Winnings:</span>
+            ) : (
+              <span>Wager:</span>
+            )}
+            <input
+              id="wager"
+              value={wager}
+              placeholder="Wager"
+              onChange={(e) => updateWager(e.target.value)}
+            />
+          </label>
+          <label htmlFor="odds">
+            Odds:
+            <input
+              id="odds"
+              value={odds}
+              placeholder="Odds"
+              onChange={(e) => updateOdds(e.target.value)}
+            />
+          </label>
+          <button onClick={(e) => calculateOdds(wager, odds, choice, e)}>
+            Submit
+          </button>
+        </form>
+      </div>
+      <div>
+        {message != "" ? <p>{message}</p> : <p>Lets make some money!</p>}
+      </div>
+      <p>Potential Winnings: {potentialWinnings}</p>
       <p>Total Payout: {totalPayout}</p>
+      <div>
+        <label htmlFor="odds">
+          The Bet:
+          <input
+            id="bet"
+            value={bet}
+            placeholder="e.g. Bulls -5"
+            onChange={(e) => updateBet(e.target.value)}
+          />
+        </label>
+        <button
+          onClick={() =>
+            console.log(
+              `Your bet of ${wager} has been placed on ${bet} at ${odds}. Good luck!`
+            )
+          }
+        >
+          Place Wager
+        </button>
+      </div>
+      <div>
+        <Action
+          bet={bet}
+          odds={odds}
+          pWinnings={potentialWinnings}
+          wager={wager}
+        />
+      </div>
     </div>
   );
 };
